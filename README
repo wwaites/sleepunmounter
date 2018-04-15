@@ -1,0 +1,23 @@
+The sleepunmounter program solves a silly problem that shouldn't be.
+With an external disk connected to an Apple computer, when the computer
+sleeps, the disk is powered down and not cleanly unmounted. When the
+computer wakes, an error indicating this appears.
+
+The sleepunmounter must be run as root because the only way to unmount
+the disk from within the notification handler seems to be to call the
+unmount(2) system call as root, with the MNT_FORCE flag. Running 
+diskutil as the user, or as root does not work, nor does unmount(2)
+without the flag to force it.
+
+Apple also seems to have decided to outlaw both the daemonize(3) C
+library routine and the fork(2) system call making turning this program
+into a daemon needlessly complicated. Therefore there is a little 
+program called daemonize that does the work.
+
+So, running this in the terminal:
+
+	sudo ./daemonize ./sleepunmounter /Volumes/Something
+
+will cause the sleepunmounter to run in the background and force
+unmounting of the disk when the computer goes to sleep.
+
